@@ -1,7 +1,7 @@
 ifneq ($(KERNELRELEASE),)
 # kbuild part of makefile
 obj-m  := afs.o
-afs-y  := afs_main.o afs_fs.o afs_inode.o
+afs-y  := afs_main.o afs_fs.o afs_inode.o afs_client.o
 
 ccflags-y := -I$(src)/..
 

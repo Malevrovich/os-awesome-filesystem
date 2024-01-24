@@ -21,6 +21,6 @@ struct dentry *afs_lookup(struct inode *parent_inode,
 	return NULL;
 }
 
-afs_inode_ops = (struct inode_operations){
+static const struct inode_operations afs_inode_ops = (struct inode_operations){
 	.lookup = afs_lookup,
 };

@@ -2,21 +2,23 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_CURRENT_BINARY_DIR, ./buildx)
 project(os-afs-server)
 
-add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(SOURCES
-  ${llp-lab1_SOURCE_DIR}/src/main.c
-  ${llp-lab1_SOURCE_DIR}/src/api/ast_api.c
-  ${llp-lab1_SOURCE_DIR}/src/ast/ast.c
-  ${llp-lab1_SOURCE_DIR}/src/parser/parser_res.c
-  ${BISON_parser_OUTPUT_SOURCE}
-  ${FLEX_lexer_OUTPUTS}
+find_package(Boost REQUIRED COMPONENTS system)
+
+add_custom_target(
+   kernel ALL
+   COMMAND make
+   WORKING_DIRECTORY ${os-afs-server_SOURCE_DIR}/kernel
 )
 
-set(INCLUDES 
-  ${llp-lab1_SOURCE_DIR}/includes/
-  ${llp-lab1_SOURCE_DIR}/includes/api/
-  ${llp-lab1_SOURCE_DIR}/includes/ast/
-  ${llp-lab1_SOURCE_DIR}/includes/parser/
-  ${llp-lab1_SOURCE_DIR}/includes/lexer/
-)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS}) 
+    add_executable(afs_server afs_server.cpp) 
+    target_link_libraries(afs_server ${Boost_LIBRARIES})
+
+    add_executable(afs_test_client afs_test_client.cpp) 
+    target_link_libraries(afs_test_client ${Boost_LIBRARIES})
+
+    
+endif()
