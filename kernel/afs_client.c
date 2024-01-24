@@ -2,7 +2,9 @@
 
 #include "afs_protocol.h"
 
-#include <linux/net.h>
+#include <net/sock.h>
+#include <linux/inet.h>
+#include <linux/socket.h>
 
 static struct socket *sock = NULL;
 
@@ -24,9 +26,11 @@ int afs_init_connection(void)
 	portnum = PORT;
 	memset(&s_addr, 0, sizeof(s_addr));
 
-	s_addr = { .sin_family = AF_INET,
-		   .sin_port = htons(portnum),
-		   .sin_addr = { .s_addr = htonl(INADDR_LOOPBACK) } };
+	s_addr = (struct sockaddr_in){
+		.sin_family = AF_INET,
+		.sin_port = htons(portnum),
+		.sin_addr = { .s_addr = htonl(INADDR_LOOPBACK) }
+	};
 
 	ret = sock->ops->connect(sock, (struct sockaddr *)&s_addr,
 				 sizeof(s_addr), 0);

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_CURRENT_BINARY_DIR, ./buildx)
+set(CMAKE_CURRENT_BINARY_DIR, ./build)
 project(os-afs-server)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -8,7 +8,9 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 add_custom_target(
    kernel ALL
-   COMMAND make
+   COMMAND make 
+   COMMAND mkdir -p ${os-afs-server_BINARY_DIR}/kernel
+   COMMAND yes | cp -rf *.ko ${os-afs-server_BINARY_DIR}/kernel/
    WORKING_DIRECTORY ${os-afs-server_SOURCE_DIR}/kernel
 )
 
