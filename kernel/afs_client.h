@@ -18,7 +18,6 @@ struct afs_remote_readdir_result {
 	int handle;
 	unsigned char ftype;
 	char name[MAX_NAME_LEN];
-	unsigned int name_len;
 };
 
 int afs_remote_readdir(int dir_handle, struct afs_remote_readdir_result res[MAX_FILES_PER_READDIR]);

@@ -1,11 +1,12 @@
 #include "afs_fs.h"
 
+#include "afs_config.h"
 #include "afs_inode.h"
 
 int afs_fill_super(struct super_block *sb, void *data, int silent)
 {
 	struct inode *inode;
-	inode = afs_get_inode(sb, NULL, S_IFDIR, 1000);
+	inode = afs_get_inode(sb, NULL, S_IFDIR, ROOT_HANDLE);
 	sb->s_root = d_make_root(inode);
 	if (sb->s_root == NULL) {
 		return -ENOMEM;

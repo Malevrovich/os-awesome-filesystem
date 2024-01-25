@@ -179,9 +179,8 @@ int afs_remote_readdir(int dir_handle, struct afs_remote_readdir_result res[MAX_
 	afs_cleanup_connection();
 
 	if (response.status == AFS_OK) {
-		pr_info("received handle %d\n", response.body.as_lookup.handle);
-
 		for (i = 0; i < MAX_FILES_PER_READDIR; ++i) {
+			pr_info("received handle %d\n", response.body.as_readdir[i].handle);
 			res[i].handle = response.body.as_readdir[i].handle;
 			if (res[i].handle == 0) {
 				break;
@@ -194,7 +193,6 @@ int afs_remote_readdir(int dir_handle, struct afs_remote_readdir_result res[MAX_
 			}
 
 			memcpy(res[i].name, response.body.as_readdir[i].name, MAX_NAME_LEN);
-			res[i].name_len = strlen(response.body.as_readdir[i].name);
 		}
 
 		return i;

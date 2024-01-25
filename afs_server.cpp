@@ -38,9 +38,11 @@ class FileSystem {
     }
 
     if (req.type == AFS_LOOKUP) {
+      std::cout << "LOOKUP" << std::endl;
       auto ptr = fs[req.args.as_lookup.dir].get();
 
       if (ptr->is_dir) {
+        std::cout << "DIR" << std::endl;
         auto dir_ptr = static_cast<Directory*>(ptr);
 
         std::string to_find(req.args.as_lookup.name);
@@ -54,6 +56,7 @@ class FileSystem {
             strcpy(res.body.as_lookup.name, base_ptr->name.data());
             res.body.as_lookup.name[base_ptr->name.size()] = '\0';
 
+            std::cout << "OK" << std::endl;
             return res;
           }
         }
@@ -64,9 +67,11 @@ class FileSystem {
     }
 
     if (req.type == AFS_READDIR) {
+      std::cout << "READDIR" << std::endl;
       auto ptr = fs[req.args.as_readdir.dir].get();
 
       if (ptr->is_dir) {
+        std::cout << "DIR" << std::endl;
         auto dir_ptr = static_cast<Directory*>(ptr);
 
         afs_response res = {.status = AFS_OK};
@@ -84,6 +89,7 @@ class FileSystem {
           res.body.as_readdir[i] = {.handle = 0};
         }
 
+        std::cout << "OK " << i << std::endl;
         return res;
       }
       return afs_response{.status = AFS_ERROR};
