@@ -14,8 +14,7 @@ int afs_fill_super(struct super_block *sb, void *data, int silent)
 	return 0;
 }
 
-struct dentry *afs_mount(struct file_system_type *fs_type, int flags,
-			 const char *token, void *data)
+struct dentry *afs_mount(struct file_system_type *fs_type, int flags, const char *token, void *data)
 {
 	struct dentry *ret;
 
@@ -34,9 +33,7 @@ void afs_kill_sb(struct super_block *sb)
 	pr_info("AFS super block is destroyed. Unmount successfully.\n");
 }
 
-static struct file_system_type afs_fs_type = { .name = "afs",
-					       .mount = afs_mount,
-					       .kill_sb = afs_kill_sb };
+static struct file_system_type afs_fs_type = { .name = "afs", .mount = afs_mount, .kill_sb = afs_kill_sb };
 
 int afs_init_fs()
 {

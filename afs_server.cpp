@@ -28,7 +28,7 @@ class FileSystem {
 
         auto file_uptr = std::make_shared<DataFile>(new_handle, std::string(req.args.as_create.name));
 
-        fs.emplace(new_handle, file_uptr);
+        auto [iter, success] = fs.emplace(new_handle, file_uptr);
         dir_ptr->data.emplace_back(file_uptr);
 
         std::cout << "OK" << std::endl;
@@ -134,7 +134,14 @@ int main() {
         size_t len = socket.read_some(boost::asio::buffer(&req, sizeof(afs_request)), error);
 
         if (error || len != sizeof(afs_request)) {
-          std::cout << "disconnecting" << std::endl;
+          if (error) {
+            std::cout << "disconnecting by error" << std::endl;
+            std::cout << error << std::endl;
+            std::cout << error.message() << std::endl;
+            std::cout << "received: " << len << " expected " << sizeof(afs_request) << std::endl;
+          } else {
+            std::cout << "disconnecting by length: " << len << " expected: " << sizeof(afs_request) << std::endl;
+          }
           break;
         }
 

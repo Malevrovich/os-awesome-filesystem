@@ -6,13 +6,15 @@
 
 static int __init afs_init(void)
 {
-	// int res = afs_init_fs();
-	// if (res != 0) {
-	// 	pr_err("Failed to initialize AFS\n");
-	// 	return res;
-	// }
+	int res = afs_init_fs();
+	if (res != 0) {
+		pr_err("Failed to initialize AFS\n");
+		return res;
+	}
 
-	afs_remote_create(1000, "a");
+	// char name[MAX_NAME_LEN] = "a";
+
+	// afs_remote_create(1000, name);
 
 	pr_info("Successfully loaded\n");
 	return 0;
@@ -20,7 +22,7 @@ static int __init afs_init(void)
 
 static void __exit afs_exit(void)
 {
-	// afs_exit_fs();
+	afs_exit_fs();
 	pr_info("AFS unloaded\n");
 }
 
