@@ -5,7 +5,16 @@
 
 typedef unsigned int fhandle;  // in current implementation is inode->i_ino
 
-enum AFS_REQUEST_TYPE { AFS_CREATE = 0, AFS_UNLINK, AFS_LOOKUP, AFS_READDIR, AFS_READ, AFS_WRITE };
+enum AFS_REQUEST_TYPE {
+  AFS_CREATE = 0,
+  AFS_UNLINK,
+  AFS_LOOKUP,
+  AFS_READDIR,
+  AFS_READ,
+  AFS_WRITE,
+  AFS_MKDIR,
+  AFS_RMDIR
+};
 
 struct afs_dir_op_args {
   fhandle dir;
@@ -36,6 +45,7 @@ struct afs_request {
     struct afs_readdir_args as_readdir;
     struct afs_read_op_args as_read;
     struct afs_write_op_args as_write;
+    struct afs_dir_op_args as_mkdir;
   } args;
 } __attribute__((packed));
 

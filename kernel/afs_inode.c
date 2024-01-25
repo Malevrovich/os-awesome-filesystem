@@ -109,15 +109,58 @@ int afs_create(struct user_namespace *namespace, struct inode *parent_inode, str
 		return -1;
 	}
 
-	inode = afs_get_inode(parent_inode->i_sb, NULL, S_IFREG | S_IRWXUGO, new_ino);
+	inode = afs_get_inode(parent_inode->i_sb, NULL, S_IFREG, new_ino);
 	d_add(child_dentry, inode);
 
 	return 0;
 }
 
+int afs_unlink(struct inode *parent_inode, struct dentry *child_dentry)
+{
+	const char *name;
+	ino_t root;
+	name = child_dentry->d_name.name;
+	root = parent_inode->i_ino;
+
+	return afs_remote_unlink(root, name);
+}
+
+int afs_mkdir(struct user_namespace *namespace, struct inode *parent_inode, struct dentry *child_dentry, umode_t t)
+{
+	ino_t root;
+	struct inode *inode;
+	const char *name = child_dentry->d_name.name;
+	int new_ino;
+	root = parent_inode->i_ino;
+
+	new_ino = afs_remote_mkdir(root, name);
+
+	if (new_ino == 0) {
+		return -1;
+	}
+
+	inode = afs_get_inode(parent_inode->i_sb, NULL, S_IFDIR, new_ino);
+
+	d_add(child_dentry, inode);
+	return 0;
+}
+
+int afs_rmdir(struct inode *parent_inode, struct dentry *child_dentry)
+{
+	const char *name;
+	ino_t root;
+	name = child_dentry->d_name.name;
+	root = parent_inode->i_ino;
+
+	return afs_remote_rmdir(root, name);
+}
+
 static const struct inode_operations afs_inode_ops = {
 	.lookup = afs_lookup,
 	.create = afs_create,
+	.unlink = afs_unlink,
+	.mkdir = afs_mkdir,
+	.rmdir = afs_rmdir,
 };
 
 static const struct file_operations afs_dir_ops = {

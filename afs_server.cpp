@@ -95,6 +95,55 @@ class FileSystem {
       return afs_response{.status = AFS_ERROR};
     }
 
+    if (req.type == AFS_UNLINK) {
+      std::cout << "UNLINK" << std::endl;
+      auto ptr = fs[req.args.as_unlink.dir].get();
+
+      if (ptr->is_dir) {
+        std::cout << "DIR" << std::endl;
+        auto dir_ptr = static_cast<Directory*>(ptr);
+
+        std::string to_find(req.args.as_unlink.name);
+        int pos = 0;
+
+        for (auto& base_ptr : dir_ptr->data) {
+          if (to_find == base_ptr->name) {
+            break;
+          }
+          pos++;
+        }
+
+        if (pos == dir_ptr->data.size()) {
+          return afs_response{.status = AFS_ERROR};
+        }
+
+        dir_ptr->data.erase(dir_ptr->data.begin() + pos);
+        return afs_response{.status = AFS_OK};
+      }
+      return afs_response{.status = AFS_ERROR};
+    }
+
+    if (req.type == AFS_MKDIR) {
+      std::cout << "MKDIR" << std::endl;
+      auto ptr = fs[req.args.as_create.dir].get();
+
+      if (ptr->is_dir) {
+        std::cout << "DIR" << std::endl;
+        auto dir_ptr = static_cast<Directory*>(ptr);
+
+        auto new_handle = next_handle++;
+
+        auto file_uptr = std::make_shared<Directory>(new_handle, std::string(req.args.as_create.name));
+
+        auto [iter, success] = fs.emplace(new_handle, file_uptr);
+        dir_ptr->data.emplace_back(file_uptr);
+
+        std::cout << "OK" << std::endl;
+        return afs_response{.status = AFS_OK, .body = {.as_create = new_handle}};
+      }
+      return afs_response{.status = AFS_ERROR};
+    }
+
     return afs_response{.status = AFS_ERROR};
   }
 

@@ -198,6 +198,73 @@ int afs_remote_readdir(int dir_handle, struct afs_remote_readdir_result res[MAX_
 		return i;
 	}
 
-	pr_warn("remote lookup returned error\n");
+	pr_warn("remote readdir returned error\n");
 	return -1;
+}
+
+int afs_remote_unlink(int dir_handle, const char name[MAX_NAME_LEN])
+{
+	struct afs_response response = {};
+	/* clang-format off */
+	struct afs_request req = { 
+        .type = AFS_UNLINK,
+		.args = { .as_lookup = { .dir = dir_handle }}
+    };
+	/* clang-format on */
+
+	memcpy(req.args.as_lookup.name, name, MAX_NAME_LEN);
+
+	afs_init_connection();
+
+	pr_info("sending remote unlink request\n");
+
+	afs_send_buffer(&req, sizeof(req));
+
+	afs_recv_buffer(&response, sizeof(response));
+
+	afs_cleanup_connection();
+
+	if (response.status == AFS_OK) {
+		pr_info("received unlink OK\n");
+		return 0;
+	}
+
+	pr_warn("remote unlink returned error\n");
+	return -1;
+}
+
+int afs_remote_mkdir(int dir_handle, const char name[MAX_NAME_LEN])
+{
+	struct afs_response res = {};
+	/* clang-format off */
+	struct afs_request req = { 
+        .type = AFS_MKDIR,
+		.args = { .as_create = { .dir = dir_handle }}
+    };
+	/* clang-format on */
+
+	memcpy(req.args.as_create.name, name, MAX_NAME_LEN);
+
+	afs_init_connection();
+
+	pr_info("sending remote mkdir request\n");
+
+	afs_send_buffer(&req, sizeof(req));
+
+	afs_recv_buffer(&res, sizeof(res));
+
+	afs_cleanup_connection();
+
+	if (res.status == AFS_OK) {
+		pr_info("received handle %d\n", res.body.as_create);
+		return res.body.as_create;
+	}
+
+	pr_warn("remote mkdir returned error\n");
+	return 0;
+}
+
+int afs_remote_rmdir(int dir_handle, const char name[MAX_NAME_LEN])
+{
+	return afs_remote_unlink(dir_handle, name);
 }

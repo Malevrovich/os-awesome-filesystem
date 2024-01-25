@@ -22,4 +22,9 @@ struct afs_remote_readdir_result {
 
 int afs_remote_readdir(int dir_handle, struct afs_remote_readdir_result res[MAX_FILES_PER_READDIR]);
 
+int afs_remote_unlink(int dir_handle, const char name[MAX_NAME_LEN]);
+
+int afs_remote_mkdir(int dir_handle, const char name[MAX_NAME_LEN]);
+int afs_remote_rmdir(int dir_handle, const char name[MAX_NAME_LEN]);
+
 #endif /* _AFS_CLIENT_H_ */
